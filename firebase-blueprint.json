@@ -1,0 +1,120 @@
+{
+  "entities": {
+    "Meeting": {
+      "title": "Meeting",
+      "description": "A scheduled meeting reservation for one of the three office meeting rooms.",
+      "type": "object",
+      "properties": {
+        "roomId": {
+          "type": "string",
+          "description": "Identifier of the meeting room.",
+          "enum": [
+            "sala-piso-8-dap",
+            "sala-a-opt",
+            "sala-b-opt"
+          ],
+          "minLength": 1,
+          "maxLength": 32
+        },
+        "title": {
+          "type": "string",
+          "description": "Short title or subject of the meeting.",
+          "minLength": 1,
+          "maxLength": 120
+        },
+        "organizer": {
+          "type": "string",
+          "description": "Person or team responsible for the meeting (no personal contact PII).",
+          "minLength": 0,
+          "maxLength": 80
+        },
+        "notes": {
+          "type": "string",
+          "description": "Optional agenda or logistics notes.",
+          "minLength": 0,
+          "maxLength": 400
+        },
+        "date": {
+          "type": "string",
+          "description": "Calendar date in YYYY-MM-DD format.",
+          "minLength": 10,
+          "maxLength": 10,
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+        },
+        "startMinutes": {
+          "type": "integer",
+          "description": "Start time in minutes from midnight (420 to 1110, step 30)."
+        },
+        "endMinutes": {
+          "type": "integer",
+          "description": "End time in minutes from midnight (450 to 1140, step 30)."
+        },
+        "createdBy": {
+          "type": "string",
+          "description": "UID of the administrator who created the meeting.",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp when the meeting was created."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp when the meeting was last updated."
+        }
+      },
+      "required": [
+        "roomId",
+        "title",
+        "organizer",
+        "notes",
+        "date",
+        "startMinutes",
+        "endMinutes",
+        "createdBy",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "Admin": {
+      "title": "Admin",
+      "description": "Authorized administrator role record keyed by user UID.",
+      "type": "object",
+      "properties": {
+        "role": {
+          "type": "string",
+          "enum": [
+            "admin"
+          ],
+          "maxLength": 20
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "role",
+        "createdAt"
+      ]
+    }
+  },
+  "firestore": {
+    "/meetings/{meetingId}": {
+      "schema": {
+        "$ref": "#/entities/Meeting"
+      },
+      "description": "Publicly readable meeting reservations for Sala piso 8 DAP, Sala A OPT, and Sala B OPT; writable exclusively by verified administrators."
+    },
+    "/admins/{adminId}": {
+      "schema": {
+        "$ref": "#/entities/Admin"
+      },
+      "description": "Administrator allowlist keyed by Firebase Auth UID."
+    }
+  }
+}
