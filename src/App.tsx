@@ -1,9 +1,10 @@
 import { useEffect, useMemo, useState } from 'react';
 import { onAuthStateChanged, signInWithPopup, signOut, type User } from 'firebase/auth';
-import { CalendarPlus, ChevronLeft, ChevronRight, Clock, LayoutGrid, LogOut } from 'lucide-react';
+import { CalendarPlus, ChevronLeft, ChevronRight, Clock, FileSpreadsheet, LayoutGrid, LogOut } from 'lucide-react';
 import { Header } from './components/Header';
 import { MeetingDetailModal } from './components/MeetingDetailModal';
 import { MeetingModal } from './components/MeetingModal';
+import { MonthlyReportModal } from './components/MonthlyReportModal';
 import { ScheduleGrid, type ScheduleDisplayMode } from './components/ScheduleGrid';
 import {
   addDays,
@@ -60,6 +61,9 @@ export default function App() {
     endMinutes: 600, // 10:00 AM
   });
   const [inspectingMeeting, setInspectingMeeting] = useState<Meeting | null>(null);
+  const [isReportOpen, setIsReportOpen] = useState(false);
+
+  const defaultYearMonth = useMemo(() => todayISO.slice(0, 7), [todayISO]);
 
   const isAdmin = Boolean(
     user &&
@@ -73,6 +77,15 @@ export default function App() {
       setUser(currentUser);
       setAuthReady(true);
       setAuthNotice(null);
+      const nextIsAdmin = Boolean(
+        currentUser &&
+          currentUser.emailVerified &&
+          currentUser.email?.toLowerCase() === ADMIN_EMAIL.toLowerCase()
+      );
+      if (!nextIsAdmin) {
+        setIsModalOpen(false);
+        setIsReportOpen(false);
+      }
     });
     return () => unsub();
   }, []);
@@ -131,6 +144,7 @@ export default function App() {
     try {
       await signOut(auth);
       setIsModalOpen(false);
+      setIsReportOpen(false);
     } finally {
       setAuthLoading(false);
     }
@@ -403,7 +417,15 @@ export default function App() {
           </div>
 
           {isAdmin && (
-            <div className="flex items-center gap-4 text-[#0B1F3A]/80">
+            <div className="flex flex-wrap items-center gap-3 sm:gap-4 text-[#0B1F3A]/80">
+              <button
+                type="button"
+                onClick={() => setIsReportOpen(true)}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white/90 hover:bg-white border border-slate-200 rounded-lg font-semibold text-[#0B1F3A] shadow-2xs transition-colors cursor-pointer"
+              >
+                <FileSpreadsheet className="w-3.5 h-3.5 text-[#EA580C]" />
+                <span>Informe mensual</span>
+              </button>
               <span>
                 Administradora:{' '}
                 <strong className="font-semibold text-[#0B1F3A]">
@@ -470,6 +492,16 @@ export default function App() {
           onClose={() => setIsModalOpen(false)}
           onSave={handleSaveMeeting}
           onDelete={handleDeleteMeeting}
+        />
+      )}
+
+      {/* Admin Monthly Report Modal */}
+      {isAdmin && (
+        <MonthlyReportModal
+          isOpen={isReportOpen}
+          meetings={meetings}
+          defaultYearMonth={defaultYearMonth}
+          onClose={() => setIsReportOpen(false)}
         />
       )}
 

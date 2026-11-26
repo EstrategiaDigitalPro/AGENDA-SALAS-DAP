@@ -92,7 +92,7 @@ export function subscribeMeetings(
   const meetingsQuery = query(
     collection(db, MEETINGS_COLLECTION),
     where('roomId', 'in', ROOM_IDS),
-    limit(500)
+    limit(2000)
   );
 
   return onSnapshot(

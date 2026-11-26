@@ -244,3 +244,21 @@ export function formatWeekRange(mondayISO: string): string {
   }
   return `${start.getDate()} ${MONTHS_SHORT[start.getMonth()]} ${start.getFullYear()} – ${end.getDate()} ${MONTHS_SHORT[end.getMonth()]} ${end.getFullYear()}`;
 }
+
+export function formatMonthYearLabel(yearMonth: string): string {
+  const match = /^(\d{4})-(\d{2})$/.exec(yearMonth);
+  if (!match) return yearMonth;
+  const year = Number(match[1]);
+  const monthIdx = Number(match[2]) - 1;
+  const monthName = MONTHS_FULL[monthIdx] ?? '';
+  const capitalized = monthName ? monthName.charAt(0).toUpperCase() + monthName.slice(1) : '';
+  return `${capitalized} ${year}`;
+}
+
+export function formatTotalHours(totalMinutes: number): string {
+  const hours = Math.floor(totalMinutes / 60);
+  const mins = totalMinutes % 60;
+  if (mins === 0) return `${hours} h`;
+  return `${hours} h ${mins} min`;
+}
+
