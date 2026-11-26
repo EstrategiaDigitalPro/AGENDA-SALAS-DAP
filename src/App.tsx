@@ -108,9 +108,18 @@ export default function App() {
         return;
       }
       if (code === 'auth/popup-blocked') {
-        setAuthNotice('El navegador bloqueó la ventana de inicio de sesión. Permite ventanas emergentes e intenta nuevamente.');
+        setAuthNotice(
+          'El navegador bloqueó la ventana de Google. Permite las ventanas emergentes en este sitio e intenta de nuevo.'
+        );
+      } else if (code === 'auth/unauthorized-domain') {
+        const currentHost = typeof window !== 'undefined' ? window.location.hostname : '';
+        setAuthNotice(
+          `Este dominio (${currentHost}) aún no está autorizado en Firebase Authentication. Agrégalo en Firebase Console → Authentication → Settings → Authorized domains para iniciar sesión desde este enlace.`
+        );
       } else {
-        setAuthNotice('No se pudo completar el inicio de sesión. Intenta de nuevo.');
+        setAuthNotice(
+          `No se pudo abrir el inicio de sesión con Google (${code || 'error desconocido'}). Intenta de nuevo o abre la vista de desarrollo en AI Studio para administrar.`
+        );
       }
     } finally {
       setAuthLoading(false);

@@ -1,6 +1,8 @@
 {
-  "name": "Agenda de Salas",
+  "name": "Agenda de Salas DAP",
   "description": "Agenda sencilla para consultar y administrar las reuniones de Sala piso 8 DAP, Sala A OPT y Sala B OPT.",
   "requestFramePermissions": [],
-  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
 }
